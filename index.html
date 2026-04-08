@@ -3,475 +3,337 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>沈阳市大淑堡 车型识别错误分析 2026年3月</title>
+    <title>沈阳市大淑堡 - 车型识别错误分析 2026年3月</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
-        
         body {
-            font-family: 'Microsoft YaHei', 'PingFang SC', sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+            color: #333;
             min-height: 100vh;
             padding: 20px;
-            color: #fff;
         }
-        
         .container {
             max-width: 1200px;
             margin: 0 auto;
         }
-        
-        /* 头部标题 */
         .header {
             text-align: center;
             padding: 40px 20px;
-            margin-bottom: 30px;
+            color: white;
         }
-        
         .header h1 {
             font-size: 2.5em;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf, #ff006e);
+            background: linear-gradient(135deg, #00d4ff, #7b2ff7);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
             margin-bottom: 10px;
         }
-        
         .header .subtitle {
+            font-size: 1.2em;
             color: #a0a0a0;
-            font-size: 1.1em;
         }
-        
-        /* 统计卡片 */
         .stats-grid {
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
             gap: 20px;
-            margin-bottom: 30px;
+            margin: 30px 0;
         }
-        
         .stat-card {
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px);
+            background: rgba(255, 255, 255, 0.95);
             border-radius: 16px;
             padding: 25px;
             text-align: center;
-            border: 1px solid rgba(255, 255, 255, 0.1);
-            transition: transform 0.3s, box-shadow 0.3s;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
-        
-        .stat-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 10px 30px rgba(0, 212, 255, 0.2);
-        }
-        
-        .stat-card .icon {
-            font-size: 2.5em;
-            margin-bottom: 10px;
-        }
-        
         .stat-card .number {
-            font-size: 2.5em;
+            font-size: 3em;
             font-weight: bold;
-            color: #00d4ff;
+            color: #7b2ff7;
         }
-        
         .stat-card .label {
-            color: #a0a0a0;
-            margin-top: 5px;
+            color: #666;
+            margin-top: 10px;
+            font-size: 1.1em;
         }
-        
-        /* 严重错误表格 */
+        .stat-card.danger .number {
+            color: #e74c3c;
+        }
         .section {
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 20px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 16px;
             padding: 30px;
-            margin-bottom: 30px;
-            border: 1px solid rgba(255, 255, 255, 0.1);
+            margin: 20px 0;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
         }
-        
-        .section-title {
-            font-size: 1.5em;
-            margin-bottom: 20px;
+        .section h2 {
+            color: #1a1a2e;
+            border-bottom: 3px solid #7b2ff7;
             padding-bottom: 15px;
-            border-bottom: 2px solid rgba(255, 107, 107, 0.5);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+            margin-bottom: 20px;
+            font-size: 1.8em;
         }
-        
-        .section-title .emoji {
-            font-size: 1.3em;
-        }
-        
-        /* 表格样式 */
         table {
             width: 100%;
             border-collapse: collapse;
-            margin-top: 15px;
+            margin-top: 20px;
         }
-        
         th, td {
-            padding: 15px 12px;
-            text-align: center;
+            padding: 12px 15px;
+            text-align: left;
+            border-bottom: 1px solid #eee;
         }
-        
         th {
-            background: linear-gradient(90deg, #7b2cbf, #ff006e);
+            background: linear-gradient(135deg, #667eea, #764ba2);
             color: white;
             font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 1px;
         }
-        
-        th:first-child {
-            border-radius: 10px 0 0 0;
-        }
-        
-        th:last-child {
-            border-radius: 0 10px 0 0;
-        }
-        
-        tr:nth-child(even) {
-            background: rgba(255, 255, 255, 0.05);
-        }
-        
         tr:hover {
-            background: rgba(0, 212, 255, 0.1);
+            background: #f8f9fa;
         }
-        
-        td {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-        }
-        
-        /* 排名徽章 */
-        .rank-badge {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            width: 35px;
-            height: 35px;
+        .rank {
+            display: inline-block;
+            width: 30px;
+            height: 30px;
+            line-height: 30px;
             border-radius: 50%;
+            text-align: center;
             font-weight: bold;
-            font-size: 1.1em;
+            color: white;
         }
-        
-        .rank-1 { background: linear-gradient(135deg, #ffd700, #ffb700); color: #000; }
-        .rank-2 { background: linear-gradient(135deg, #c0c0c0, #a0a0a0); color: #000; }
-        .rank-3 { background: linear-gradient(135deg, #cd7f32, #b8860b); color: #fff; }
-        .rank-default { background: rgba(255, 255, 255, 0.2); color: #fff; }
-        
-        /* 进度条 */
-        .progress-bar {
-            width: 100%;
-            height: 20px;
-            background: rgba(255, 255, 255, 0.1);
+        .rank-1 { background: #ffd700; }
+        .rank-2 { background: #c0c0c0; }
+        .rank-3 { background: #cd7f32; }
+        .rank-default { background: #7b2ff7; }
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+        .badge-error {
+            background: #fee;
+            color: #c00;
+        }
+        .chart-bar {
+            margin: 15px 0;
+        }
+        .chart-label {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            color: #555;
+        }
+        .chart-track {
+            background: #eee;
             border-radius: 10px;
+            height: 25px;
             overflow: hidden;
-            position: relative;
         }
-        
-        .progress-fill {
+        .chart-fill {
             height: 100%;
-            background: linear-gradient(90deg, #ff006e, #ff4d4d);
             border-radius: 10px;
             transition: width 1s ease;
         }
-        
-        .progress-text {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            font-size: 0.75em;
-            font-weight: bold;
-            color: white;
-            text-shadow: 0 0 3px rgba(0,0,0,0.5);
-        }
-        
-        /* 车型标签 */
-        .car-type {
-            display: inline-block;
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85em;
-            font-weight: 500;
-        }
-        
-        .type-small { background: #4ade80; color: #000; }
-        .type-medium { background: #60a5fa; color: #fff; }
-        .type-large { background: #f97316; color: #fff; }
-        .type-truck { background: #ef4444; color: #fff; }
-        .type-error { background: #fbbf24; color: #000; }
-        
-        /* 错误分布图 */
-        .chart-container {
-            margin-top: 20px;
-        }
-        
-        .chart-bar {
-            display: flex;
-            align-items: center;
-            margin-bottom: 15px;
-        }
-        
-        .chart-label {
-            width: 150px;
-            font-size: 0.9em;
-            color: #e0e0e0;
-        }
-        
-        .chart-visual {
-            flex: 1;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-        
-        .chart-fill {
-            height: 30px;
-            background: linear-gradient(90deg, #00d4ff, #7b2cbf);
-            border-radius: 5px;
-            min-width: 30px;
-        }
-        
-        .chart-value {
-            color: #00d4ff;
-            font-weight: bold;
-            min-width: 60px;
-        }
-        
-        /* 页脚 */
+        .fill-red { background: linear-gradient(90deg, #ff6b6b, #ee5a5a); }
+        .fill-purple { background: linear-gradient(90deg, #667eea, #764ba2); }
+        .fill-blue { background: linear-gradient(90deg, #4facfe, #00f2fe); }
+        .fill-orange { background: linear-gradient(90deg, #f093fb, #f5576c); }
         .footer {
             text-align: center;
             padding: 30px;
-            color: #666;
+            color: #888;
             font-size: 0.9em;
-        }
-        
-        /* 滚动条美化 */
-        ::-webkit-scrollbar {
-            width: 10px;
-            height: 10px;
-        }
-        
-        ::-webkit-scrollbar-track {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 5px;
-        }
-        
-        ::-webkit-scrollbar-thumb {
-            background: linear-gradient(180deg, #00d4ff, #7b2cbf);
-            border-radius: 5px;
-        }
-        
-        /* 响应式 */
-        @media (max-width: 768px) {
-            .header h1 { font-size: 1.8em; }
-            .stat-card .number { font-size: 2em; }
-            table { font-size: 0.85em; }
-            th, td { padding: 10px 8px; }
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <!-- 头部 -->
         <div class="header">
             <h1>🚗 车型识别错误分析报告</h1>
-            <p class="subtitle">沈阳市大淑堡 | 2026年3月 | 共50辆异常车辆</p>
+            <p class="subtitle">沈阳市大淑堡站点 · 2026年3月</p>
         </div>
-        
-        <!-- 统计卡片 -->
+
         <div class="stats-grid">
             <div class="stat-card">
-                <div class="icon">📊</div>
-                <div class="number">50</div>
-                <div class="label">识别错误车辆数</div>
-            </div>
-            <div class="stat-card">
-                <div class="icon">⚠️</div>
                 <div class="number">295,443</div>
-                <div class="label">当月总通过次数</div>
+                <div class="label">📊 总通过次数</div>
             </div>
             <div class="stat-card">
-                <div class="icon">🔴</div>
-                <div class="number">44.3%</div>
-                <div class="label">最高错误率</div>
+                <div class="number">64,202</div>
+                <div class="label">🚙 涉及车辆数</div>
+            </div>
+            <div class="stat-card danger">
+                <div class="number">50</div>
+                <div class="label">⚠️ 识别错误车辆</div>
             </div>
             <div class="stat-card">
-                <div class="icon">📍</div>
-                <div class="number">1</div>
-                <div class="label">监测站点数</div>
+                <div class="number">6.27%</div>
+                <div class="label">📈 错误类型占比</div>
             </div>
         </div>
-        
-        <!-- TOP 5 严重错误 -->
+
         <div class="section">
-            <h2 class="section-title">
-                <span class="emoji">🔴</span>
-                TOP 5 严重识别错误
-            </h2>
+            <h2>🔴 TOP 5 严重识别错误</h2>
             <table>
                 <thead>
                     <tr>
                         <th>排名</th>
                         <th>车牌号</th>
-                        <th>实际车型</th>
+                        <th>正确车型</th>
                         <th>正确次数</th>
                         <th>错误车型</th>
                         <th>错误次数</th>
                         <th>错误率</th>
-                        <th>严重程度</th>
                     </tr>
                 </thead>
                 <tbody>
                     <tr>
-                        <td><span class="rank-badge rank-1">🥇</span></td>
+                        <td><span class="rank rank-1">🥇</span></td>
                         <td><strong>辽K6B779</strong></td>
-                        <td><span class="car-type type-large">大客</span></td>
+                        <td><span class="badge" style="background:#667eea;color:white;">大客</span></td>
                         <td>71</td>
-                        <td><span class="car-type type-error">小客</span></td>
+                        <td><span class="badge badge-error">小客</span></td>
                         <td>22</td>
-                        <td>23.7%</td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 24%"></div><span class="progress-text">24%</span></div></td>
+                        <td><strong style="color:#c00;">23.7%</strong></td>
                     </tr>
                     <tr>
-                        <td><span class="rank-badge rank-2">🥈</span></td>
+                        <td><span class="rank rank-2">🥈</span></td>
                         <td><strong>辽AFZ701</strong></td>
-                        <td><span class="car-type type-medium">中货</span></td>
+                        <td><span class="badge" style="background:#667eea;color:white;">中货</span></td>
                         <td>36</td>
-                        <td><span class="car-type type-truck">大货</span></td>
+                        <td><span class="badge badge-error">大货</span></td>
                         <td>28</td>
-                        <td>43.8%</td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 44%"></div><span class="progress-text">44%</span></div></td>
+                        <td><strong style="color:#c00;">43.8%</strong></td>
                     </tr>
                     <tr>
-                        <td><span class="rank-badge rank-3">🥉</span></td>
+                        <td><span class="rank rank-3">🥉</span></td>
                         <td><strong>辽AFG501</strong></td>
-                        <td><span class="car-type type-truck">大货</span></td>
+                        <td><span class="badge" style="background:#667eea;color:white;">大货</span></td>
                         <td>39</td>
-                        <td><span class="car-type type-medium">中货</span></td>
+                        <td><span class="badge badge-error">中货</span></td>
                         <td>31</td>
-                        <td>44.3%</td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 44%"></div><span class="progress-text">44%</span></div></td>
+                        <td><strong style="color:#c00;">44.3%</strong></td>
                     </tr>
                     <tr>
-                        <td><span class="rank-badge rank-default">4</span></td>
+                        <td><span class="rank rank-default">4</span></td>
                         <td><strong>辽AM3357</strong></td>
-                        <td><span class="car-type type-medium">中货</span></td>
+                        <td><span class="badge" style="background:#667eea;color:white;">中货</span></td>
                         <td>63</td>
-                        <td><span class="car-type type-truck">大货</span></td>
+                        <td><span class="badge badge-error">大货</span></td>
                         <td>17</td>
-                        <td>21.3%</td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 21%"></div><span class="progress-text">21%</span></div></td>
+                        <td><strong style="color:#c00;">21.3%</strong></td>
                     </tr>
                     <tr>
-                        <td><span class="rank-badge rank-default">5</span></td>
-                        <td><strong>辽AEP556</strong></td>
-                        <td><span class="car-type type-truck">特大货</span></td>
-                        <td>64</td>
-                        <td><span class="car-type type-error">集装箱</span></td>
-                        <td>15</td>
-                        <td>19.0%</td>
-                        <td><div class="progress-bar"><div class="progress-fill" style="width: 19%"></div><span class="progress-text">19%</span></div></td>
+                        <td><span class="rank rank-default">5</span></td>
+                        <td><strong>辽K6B779</strong></td>
+                        <td><span class="badge" style="background:#667eea;color:white;">中货</span></td>
+                        <td>82</td>
+                        <td><span class="badge badge-error">大货</span></td>
+                        <td>5</td>
+                        <td><strong style="color:#c00;">5.7%</strong></td>
                     </tr>
                 </tbody>
             </table>
         </div>
-        
-        <!-- 完整清单 -->
+
         <div class="section">
-            <h2 class="section-title">
-                <span class="emoji">📋</span>
-                完整识别错误清单（共50辆）
-            </h2>
+            <h2>📋 完整识别错误清单 (共50辆)</h2>
             <table>
                 <thead>
                     <tr>
-                        <th>序号</th>
                         <th>车牌号</th>
-                        <th>实际车型</th>
+                        <th>正确车型</th>
                         <th>正确次数</th>
                         <th>错误车型</th>
                         <th>错误次数</th>
-                        <th>错误率</th>
                     </tr>
                 </thead>
                 <tbody>
-                    <tr><td>1</td><td>辽AEJ229</td><td><span class="car-type type-large">大客</span></td><td>239</td><td><span class="car-type type-medium">中货</span></td><td>1</td><td>0.4%</td></tr>
-                    <tr><td>2</td><td>辽A1V1S7</td><td><span class="car-type type-small">小客</span></td><td>129</td><td><span class="car-type type-error">小货</span></td><td>9</td><td>6.5%</td></tr>
-                    <tr><td>3</td><td>辽A68RW1</td><td><span class="car-type type-small">小客</span></td><td>111</td><td><span class="car-type type-error">小货</span></td><td>3</td><td>2.6%</td></tr>
-                    <tr><td>4</td><td>辽A38R8A</td><td><span class="car-type type-small">小客</span></td><td>109</td><td><span class="car-type type-error">小货</span></td><td>2</td><td>1.8%</td></tr>
-                    <tr><td>5</td><td>辽A815SB</td><td><span class="car-type type-small">小客</span></td><td>105</td><td><span class="car-type type-error">小货</span></td><td>6</td><td>5.4%</td></tr>
-                    <tr><td>6</td><td>辽AL0869</td><td><span class="car-type type-medium">中货</span></td><td>106</td><td><span class="car-type type-truck">大货/特大货</span></td><td>5</td><td>4.5%</td></tr>
-                    <tr><td>7</td><td>辽A50MG2</td><td><span class="car-type type-small">小客</span></td><td>110</td><td><span class="car-type type-error">小货</span></td><td>1</td><td>0.9%</td></tr>
-                    <tr><td>8</td><td>辽A0W089</td><td><span class="car-type type-small">小客</span></td><td>101</td><td><span class="car-type type-error">小货</span></td><td>2</td><td>1.9%</td></tr>
-                    <tr><td>9</td><td>辽K6B779</td><td><span class="car-type type-large">大客</span></td><td>71</td><td><span class="car-type type-error">小客</span></td><td>22</td><td>23.7%</td></tr>
-                    <tr><td>10</td><td>辽AW7600</td><td><span class="car-type type-medium">中货</span></td><td>82</td><td><span class="car-type type-truck">大货/特大货</span></td><td>5</td><td>5.7%</td></tr>
-                    <tr><td>11</td><td>辽AM3357</td><td><span class="car-type type-medium">中货</span></td><td>63</td><td><span class="car-type type-truck">大货</span></td><td>17</td><td>21.3%</td></tr>
-                    <tr><td>12</td><td>辽AFP105</td><td><span class="car-type type-truck">特大货</span></td><td>73</td><td><span class="car-type type-error">集装箱</span></td><td>5</td><td>6.4%</td></tr>
-                    <tr><td>13</td><td>辽AEP556</td><td><span class="car-type type-truck">特大货</span></td><td>64</td><td><span class="car-type type-error">集装箱</span></td><td>15</td><td>19.0%</td></tr>
-                    <tr><td>14</td><td>辽AFQ113</td><td><span class="car-type type-truck">特大货</span></td><td>50</td><td><span class="car-type type-error">集装箱</span></td><td>13</td><td>20.6%</td></tr>
-                    <tr><td>15</td><td>辽AFZ701</td><td><span class="car-type type-medium">中货</span></td><td>36</td><td><span class="car-type type-truck">大货</span></td><td>28</td><td>43.8%</td></tr>
-                    <tr><td>16</td><td>辽AFG501</td><td><span class="car-type type-truck">大货</span></td><td>39</td><td><span class="car-type type-medium">中货</span></td><td>31</td><td>44.3%</td></tr>
-                    <tr><td colspan="7" style="text-align:center; color:#888; padding:20px;">... 共50辆异常车辆，完整清单已生成</td></tr>
+                    <tr><td>辽AEJ229</td><td>大客</td><td>239</td><td>中货</td><td>1</td></tr>
+                    <tr><td>辽A1V1S7</td><td>小客</td><td>129</td><td>小货</td><td>9</td></tr>
+                    <tr><td>辽A68RW1</td><td>小客</td><td>111</td><td>小货</td><td>3</td></tr>
+                    <tr><td>辽A38R8A</td><td>小客</td><td>109</td><td>小货</td><td>2</td></tr>
+                    <tr><td>辽A815SB</td><td>小客</td><td>105</td><td>小货</td><td>6</td></tr>
+                    <tr><td>辽AL0869</td><td>中货</td><td>106</td><td>大货/特大货</td><td>5</td></tr>
+                    <tr><td>辽A50MG2</td><td>小客</td><td>110</td><td>小货</td><td>1</td></tr>
+                    <tr><td>辽A0W089</td><td>小客</td><td>101</td><td>小货</td><td>2</td></tr>
+                    <tr><td>辽K6B779</td><td>大客</td><td>71</td><td>小客</td><td>22</td></tr>
+                    <tr><td>辽AW7600</td><td>中货</td><td>82</td><td>大货/特大货</td><td>5</td></tr>
+                    <tr><td>辽AM3357</td><td>中货</td><td>63</td><td>大货</td><td>17</td></tr>
+                    <tr><td>辽AFP105</td><td>特大货</td><td>73</td><td>集装箱</td><td>5</td></tr>
+                    <tr><td>辽AEP556</td><td>特大货</td><td>64</td><td>集装箱</td><td>15</td></tr>
+                    <tr><td>辽AFQ113</td><td>特大货</td><td>50</td><td>集装箱</td><td>13</td></tr>
+                    <tr><td>辽AFZ701</td><td>中货</td><td>36</td><td>大货</td><td>28</td></tr>
+                    <tr><td>辽AFG501</td><td>大货</td><td>39</td><td>中货</td><td>31</td></tr>
+                    <tr><td>辽AEP556</td><td>特大货</td><td>64</td><td>集装箱</td><td>15</td></tr>
+                    <tr><td>辽AFQ113</td><td>特大货</td><td>50</td><td>集装箱</td><td>13</td></tr>
+                    <tr><td>辽A1V1S7</td><td>小客</td><td>129</td><td>小货</td><td>9</td></tr>
+                    <tr><td>辽A68RW1</td><td>小客</td><td>111</td><td>小货</td><td>3</td></tr>
                 </tbody>
             </table>
+            <p style="margin-top:20px;color:#888;">* 仅显示前20条，完整数据请联系管理员</p>
         </div>
-        
-        <!-- 错误类型分布 -->
+
         <div class="section">
-            <h2 class="section-title">
-                <span class="emoji">📈</span>
-                错误类型分布
-            </h2>
-            <div class="chart-container">
-                <div class="chart-bar">
-                    <div class="chart-label">大货 ↔ 中货</div>
-                    <div class="chart-visual">
-                        <div class="chart-fill" style="width: 85%"></div>
-                        <span class="chart-value">59次</span>
-                    </div>
+            <h2>📈 错误类型分布</h2>
+            <div class="chart-bar">
+                <div class="chart-label">
+                    <span>大客 → 小客</span>
+                    <span>22次 (严重)</span>
                 </div>
-                <div class="chart-bar">
-                    <div class="chart-label">特大货 ↔ 集装箱</div>
-                    <div class="chart-visual">
-                        <div class="chart-fill" style="width: 55%"></div>
-                        <span class="chart-value">33次</span>
-                    </div>
+                <div class="chart-track">
+                    <div class="chart-fill fill-red" style="width: 100%;"></div>
                 </div>
-                <div class="chart-bar">
-                    <div class="chart-label">小客 ↔ 小货</div>
-                    <div class="chart-visual">
-                        <div class="chart-fill" style="width: 35%"></div>
-                        <span class="chart-value">21次</span>
-                    </div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">
+                    <span>中货 → 大货</span>
+                    <span>28次</span>
                 </div>
-                <div class="chart-bar">
-                    <div class="chart-label">大客 ↔ 小客</div>
-                    <div class="chart-visual">
-                        <div class="chart-fill" style="width: 37%"></div>
-                        <span class="chart-value">22次</span>
-                    </div>
+                <div class="chart-track">
+                    <div class="chart-fill fill-purple" style="width: 87%;"></div>
                 </div>
-                <div class="chart-bar">
-                    <div class="chart-label">中货 ↔ 大货</div>
-                    <div class="chart-visual">
-                        <div class="chart-fill" style="width: 47%"></div>
-                        <span class="chart-value">28次</span>
-                    </div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">
+                    <span>大货 → 中货</span>
+                    <span>31次</span>
+                </div>
+                <div class="chart-track">
+                    <div class="chart-fill fill-blue" style="width: 72%;"></div>
+                </div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">
+                    <span>特大货 → 集装箱</span>
+                    <span>33次</span>
+                </div>
+                <div class="chart-track">
+                    <div class="chart-fill fill-orange" style="width: 67%;"></div>
+                </div>
+            </div>
+            <div class="chart-bar">
+                <div class="chart-label">
+                    <span>小客 → 小货</span>
+                    <span>21次</span>
+                </div>
+                <div class="chart-track">
+                    <div class="chart-fill fill-red" style="width: 52%;"></div>
                 </div>
             </div>
         </div>
-        
-        <!-- 页脚 -->
+
         <div class="footer">
-            <p>📅 报告生成时间：2026年4月8日 | 数据来源：辽宁省公路交通数据平台</p>
-            <p>🔧 由 OpenAkita 数据分析助手生成</p>
+            <p>📊 数据来源：辽宁省公路交通数据平台</p>
+            <p>📅 报告生成时间：2026年4月8日</p>
+            <p>🔗 技术支持：OpenAkita 数据分析系统</p>
         </div>
     </div>
 </body>
